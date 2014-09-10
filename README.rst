@@ -3,10 +3,8 @@ django-stencil
 ==========================
 
 Django Stencil is a boilerplate template for Django 1.7+ running Python 3.4.1
-It has been build from our experience in deploying rapid applications and draws on
+It has been build from our experience in deploying rapid applications in AWS. It draws on
 the methodologies used on projects with both Samsung and HTC.
-
-Based on my own setup, if you like it please use.
 
 This project is a work in progress and still in development. It is intended for use with Django 1.7+ or above.
 
