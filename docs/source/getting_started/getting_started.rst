@@ -17,7 +17,7 @@ Install Django::
 
 To create a new django-stencil base project, run the following command::
 
-    $ django-admin.py startproject --template=https://github.com/webovate/django-stencil/zipball/master project_name
+    $ django-admin.py startproject --template=https://github.com/glynjackson/django-stencil/zipball/master project_name
 
 Where ``project_name`` is the name of the project you'd like to create.
 
