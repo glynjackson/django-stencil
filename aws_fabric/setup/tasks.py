@@ -85,7 +85,7 @@ class _Wizard(object):
                 for k, i in self.environment.environment_values.iteritems():
                     handle.write("{} = '{}' \n".format(k.upper(), i))
             Notification('Successful!').success()
-        except Exception, e:
+        except Exception as e:
             Notification('Error could not write configuration file. %s ' % str(e)).error()
 
 
