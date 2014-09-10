@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Fabric Tasks &mdash; django-stencil 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="django-stencil 0.0.1 documentation" href="../index.html"/>
+        <link rel="next" title="Allowed Hosts working with ELB" href="allowed_hosts.html"/>
+        <link rel="prev" title="Starting your project" href="../getting_started/getting_started.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> django-stencil</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/getting_started.html">Starting your project</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/getting_started.html#installing-requirements">Installing requirements</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Fabric Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="allowed_hosts.html">Allowed Hosts working with ELB</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">django-stencil</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Fabric Tasks</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/aws/tasks.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="fabric-tasks">
+<h1>Fabric Tasks<a class="headerlink" href="#fabric-tasks" title="Permalink to this headline">¶</a></h1>
+<p>Django Stencil comes with a powerful yet flexible set of fabric tasks.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>fab local setupwizard</dt>
+<dd><ul class="first last simple">
+<li>Creates configuration and connection settings to AWS for first time use.
+Adds the new host to the hostfile for production environment.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>fab production instance</dt>
+<dd><ul class="first last simple">
+<li>Creates a new EC2 instance form a blank AMI image. Instance will be setup based on your server template.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>fab production serversetup</dt>
+<dd><ul class="first last simple">
+<li>Runs and configures server software and services i.e. Gunicorn, Supervisor and Nginx.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production deploy</dt>
+<dd><ul class="first last simple">
+<li>Pulls the latest commit from the master branch locally and zips up a release. deploys files to server,
+collects the static files, syncs the db and restarts services.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production update</dt>
+<dd><ul class="first last simple">
+<li>Updates/Installs OS site packages.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production requirements</dt>
+<dd><ul class="first last simple">
+<li>Runs the pip installs all requirements.txt command</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production static</dt>
+<dd><ul class="first last simple">
+<li>Runs the collectstatic command.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production sync</dt>
+<dd><ul class="first last simple">
+<li>Runs syncdb or migration tasks against a database.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production reboot</dt>
+<dd><ul class="first last simple">
+<li>Reboots a EC2 instance.2</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fab production createsuperuser</dt>
+<dd><ul class="first last simple">
+<li>Creates a new superuser against a database.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>These fabric tasks have been design to allow flexibility using Django Stancil&#8217;s environment templates which define the server environment such tasks are run against.</p>
+<p>Environment templates allow any of the available fabric tasks to be run against a predefined AMI on Amazon. Each template can be written for a particular Linux distro and server set-up.</p>
+<p>Out-of-the-box Django Stencil’s includes one environment template (Ubuntu14)  which can be run against a blank AMI running Ubuntu 14. However, its easy to add your own template.</p>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="allowed_hosts.html" class="btn btn-neutral float-right" title="Allowed Hosts working with ELB"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../getting_started/getting_started.html" class="btn btn-neutral" title="Starting your project"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Glyn Jackson.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+PyMySQL
+pillow
+Django==1.7
+Sphinx==1.2.3
+sphinx_rtd_theme==0.1.6
+django-storages==1.1.8
+boto==2.32.1
+requests
+django_debug_toolbar==1.2.1
+django_extensions==1.3.3
+Werkzeug==0.9.4
+nose==1.3.4
+django_nose
+django_coverage==1.2.4
+djangorestframework

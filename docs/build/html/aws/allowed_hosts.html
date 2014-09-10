@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Allowed Hosts working with ELB &mdash; django-stencil 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="django-stencil 0.0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="Fabric Tasks" href="tasks.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> django-stencil</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/getting_started.html">Starting your project</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/getting_started.html#installing-requirements">Installing requirements</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">Fabric Tasks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Allowed Hosts working with ELB</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">django-stencil</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Allowed Hosts working with ELB</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/aws/allowed_hosts.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="allowed-hosts-working-with-elb">
+<h1>Allowed Hosts working with ELB<a class="headerlink" href="#allowed-hosts-working-with-elb" title="Permalink to this headline">¶</a></h1>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">credit to: <a class="reference external" href="http://dryan.me/articles/elb-django-allowed-hosts/">http://dryan.me/articles/elb-django-allowed-hosts/</a></p>
+</div>
+<div class="highlight-django"><div class="highlight"><pre><span class="x"># Hosts/domain names that are valid for this site; required if DEBUG is False</span>
+<span class="x"># See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts</span>
+<span class="x">ALLOWED_HOSTS = [</span>
+<span class="x">    &#39;.compute-1.amazonaws.com&#39;, # allows viewing of instances directly</span>
+<span class="x">]</span>
+
+<span class="x">import requests</span>
+<span class="x">EC2_PRIVATE_IP  =   None</span>
+<span class="x">try:</span>
+<span class="x">    EC2_PRIVATE_IP  =   requests.get(&#39;http://169.254.169.254/latest/meta-data/local-ipv4&#39;, timeout = 0.01).text</span>
+<span class="x">except requests.exceptions.RequestException:</span>
+<span class="x">    pass</span>
+
+<span class="x">if EC2_PRIVATE_IP:</span>
+<span class="x">    ALLOWED_HOSTS.append(EC2_PRIVATE_IP)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="tasks.html" class="btn btn-neutral" title="Fabric Tasks"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Glyn Jackson.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
