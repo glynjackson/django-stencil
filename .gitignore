@@ -13,5 +13,5 @@ lib64
 .idea/
 /static/
 workspace.xml
-/django-env/
+/env/
 /*.ini
