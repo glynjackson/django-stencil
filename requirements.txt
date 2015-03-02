@@ -13,3 +13,5 @@ nose==1.3.4
 django_nose
 django_coverage==1.2.4
 djangorestframework
+django-oauth-toolkit
+python-dotenv
