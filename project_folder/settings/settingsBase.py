@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # add app folder to path
-sys.path.insert(0, join(BASE_DIR, 'apps'))
+#sys.path.insert(0, join(BASE_DIR, 'apps'))
 
 # These are the hostnames as returned by platform.node().
 # If you aren't sure what to put, leave them blank and the error message should tell you which hostname Python sees.
@@ -108,6 +108,6 @@ INSTALLED_APPS += [
 
 # My apps
 INSTALLED_APPS += [
-    "common",
+    "project_folder.apps.common",
 ]
 
