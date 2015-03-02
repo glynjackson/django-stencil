@@ -30,48 +30,31 @@ class _Wizard(object):
                        validate=int, default=0)
         self.environment.template = template_choices[int(value)]
 
+
         self.environment.local_repo = prompt("What is the full path locally to your project?",
                                              default="/Users/user/Documents/workspace/project_folder")
 
+
         self.environment.server_repo = prompt("What will be your server directory for this project?",
-                                              default="/srv/project_folder")
+                                             default="/srv/project_folder")
+
+
 
         self.environment.aws_user = prompt("What is your EC2 login user:", default="ubuntu")
 
-        # Prompt for AWS details and test connection.
-        self._prompt_aws_keys()
-        while self._can_connect() is False:
-            self._prompt_aws_keys()
+        self.environment.aws_key = prompt("What is your AWS public key:")
+        self.environment.aws_secret_key = prompt("What is your AWS secret key:")
+
+        if confirm("Test AWS connection before continuing?", True):
+            Notification('Testing connection').info()
+            AWS(access_key=self.environment.aws_key, secret_key=self.environment.aws_secret_key).connect()
 
         self._set_private_file()
         self._check_private_file_exists()
 
-        Notification("Almost there...").info()
-        self.environment.aws_ami = prompt("What is your AMI image number? i.e ami-ad31f0da", )
 
         # Write the configuration file
         self._write_congif()
-
-    def _prompt_aws_keys(self):
-        """
-        Asks for AWS credentials
-        """
-        self.environment.aws_key = prompt("What is your AWS public key:")
-        self.environment.aws_secret_key = prompt("What is your AWS secret key:")
-
-
-    def _can_connect(self):
-        """
-        Tests AWS connection
-        """
-        Notification('Testing connection').info()
-        connection = AWS(access_key=self.environment.aws_key, secret_key=self.environment.aws_secret_key).connect()
-        try:
-            connection.get_all_regions()
-        except Exception:
-            Notification("AWS was not able to validate the provided access credentials!").error()
-            return False
-        return True
 
 
     def _write_congif(self):
@@ -85,7 +68,7 @@ class _Wizard(object):
                 for k, i in self.environment.environment_values.iteritems():
                     handle.write("{} = '{}' \n".format(k.upper(), i))
             Notification('Successful!').success()
-        except Exception as e:
+        except Exception, e:
             Notification('Error could not write configuration file. %s ' % str(e)).error()
 
 
@@ -106,7 +89,7 @@ class _Wizard(object):
 
     def _set_private_file(self):
         self.environment.aws_private_file = prompt("Where is your private key file located?",
-                                                   default="/Users/user/Documents/EC2Keys/project.pem")
+                                               default="/Users/user/Documents/EC2Keys/project.pem")
 
     def _check_private_file_exists(self):
         if not os.path.exists(self.environment.aws_private_file):

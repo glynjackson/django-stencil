@@ -9,8 +9,6 @@ keep_alive = 2
 preload = True
 
 # Logging
-errorlog = '/srv/YOUR_DOMIAN/logs/error.log'
+errorlog = '/srv/DOMAIN/logs/error.log'
 # A string of "debug", "info", "warning", "error", "critical"
 loglevel = 'info'
-#accesslog = '/srv/rudifferent/logs/samsung.log'
-

@@ -11,23 +11,25 @@ Commands include:
     - fab production serversetup
         - Runs and configures server software and services i.e. Gunicorn, Supervisor and Nginx.
 
-    - fab production deploy
-        - Pulls the latest commit from the master branch locally and zips up a release. deploys files to server,
+    - fab production/staging deploy
+        - Pulls the latest commit from the master (production) and develop (staging) branch locally and zips up
+          a release. deploys files to server,
           collects the static files, syncs the db and restarts the server.
 
-    - fab production update
+
+    - fab production/staging update
         - Updates/Installs OS site packages.
 
     - fab production requirements
         - Runs the pip installs all requirements.txt command
 
-    - fab production static
+    - fab production/staging static
         - Runs the collectstatic command.
 
     - fab production sync
         - Runs syncdb or migration tasks against a database.
 
-    - fab production reboot
+    - fab production/staging reboot
         - Reboots a EC2 instance.2
 
     - fab production createsuperuser
@@ -38,7 +40,6 @@ import os
 import time
 import importlib
 
-from fabric.operations import prompt
 from fabric.contrib.console import confirm
 from fabric.api import task, settings, sudo, execute, env, run, cd, local, put, abort, get, hosts
 
@@ -47,26 +48,46 @@ from aws_fabric.utilities import _run_task, add_to_hosts, get_hosts_list, get_se
 from aws_fabric.ec2.api import _create_instance
 
 
+def base_environment_settings():
+    """
+    Common environment settings.
+    """
+    local_path = os.path.dirname(os.path.realpath(__file__)) + "/aws_fabric/config"
+    _this_settings = get_settings(local_path)
+    env.release_stamp = time.strftime('%Y%m%d%H%M%S')
+    env.connection_attempts = 5
+    env.local_repo = _this_settings['LOCAL_REPO']
+    env.server_repo = _this_settings['SERVER_REPO']
+    env.user = _this_settings['AWS_USER']
+    env.key_filename = _this_settings['AWS_PRIVATE_FILE']
+    env.aws_key = _this_settings['AWS_KEY']
+    env.aws_secret_key = _this_settings['AWS_SECRET_KEY']
+    env.hosts = get_hosts_list(local_path, staging=True)
+    env.template = _this_settings['TEMPLATE']
+    env.tasks = importlib.import_module("aws_fabric.environments.%s.%s" % (env.template, "tasks"))
+
 def local():
     pass
 
 
+def staging():
+    base_environment_settings()
+    env.environment = 'staging'
+    env.branch = "master"
+
+
+
 def production():
-    local_path = os.path.dirname(os.path.realpath(__file__)) + "/aws_fabric/config"
-    settings = get_settings(local_path)
-    env.release_stamp = time.strftime('%Y%m%d%H%M%S')
-    env.connection_attempts = 5
-    env.local_repo = settings['LOCAL_REPO']
-    env.server_repo = settings['SERVER_REPO']
-    env.user = settings['AWS_USER']
-    env.key_filename = settings['AWS_PRIVATE_FILE']
-    env.aws_key = settings['AWS_KEY']
-    env.aws_secret_key = settings['AWS_SECRET_KEY']
-    env.hosts = get_hosts_list(local_path)
-    env.template = settings['TEMPLATE']
-    env.aws_ami = settings['AWS_AMI']
-
-
+    base_environment_settings()
+    env.branch = "release"
+    env.environment = 'production'
+    env.server_type = {
+        'web': {
+            'image_id': 'ami-0ea61279',
+            'instance_type': 't1.micro',
+            'security_groups': ['web'],
+        },
+    }
 
 
     env.tasks = importlib.import_module("aws_fabric.environments.%s.%s" % (env.template, "tasks"))
@@ -87,30 +108,20 @@ def serversetup():
     _server_setup()
 
 
+
 def instance():
     """
     Creates an EC2 instance from an AMI and configures it based on setup template.
     """
-    aws_ami = prompt("Hit enter to use your default AMI or enter a new one:", default=env.aws_ami)
-    aws_security_groups = prompt("Add this instance which security group? ", default=['web'])
-    aws_instance_type = prompt("What instance type do you want to create? ", default="t1.micro")
-
-    env.server_type = {
-        'web': {
-            'image_id': aws_ami,
-            'instance_type': aws_instance_type,
-            'security_groups': aws_security_groups,
-        },
-    }
-
     # Use Boto to create an EC2 instance.
     env.host_string = _create_instance()
+
     # Run standard tasks.
     _update_os()
     _run_task(env.tasks.build_essentials, "Building server essentials...", "Finished building essentials")
     _deploy_project()
     _install_requirements()
-    if confirm("Do you want to collect static?", False):
+    if confirm("Do you want to collect static", False):
         _collect_static()
     if confirm("Do you want to run the syncdb / migration command for your data?", False):
         _sync_db()
@@ -134,6 +145,8 @@ def deploy():
     """
     env.release_stamp = time.strftime('%Y%m%d%H%M%S')
     _deploy_project()
+    # Update any environment variables.
+    _set_update_environment_vars()
     if confirm("Do you want to update requirements?", False):
         _install_requirements()
     if confirm("Do you want to run the collectstatic command", False):
@@ -186,8 +199,12 @@ def createsuperuser():
     _create_superuser()
 
 
-def test():
-    pass
+def environment_vars():
+    """
+    Set/Update environment variables.
+    """
+    _set_update_environment_vars()
+
 
 
 """
@@ -257,3 +274,10 @@ def _server_setup():
     """
     _run_task(env.tasks.setup_server, "Setting up server services/software...",
               "Finished setting up server services/software")
+
+def _set_update_environment_vars():
+    """
+    Private function to set/update the system environment variables.
+    """
+    _run_task(env.tasks.set_update_env_vars, "Setting/Updating Environment Variables...",
+              "Finished Setting/Updating Environment Variable.s")

@@ -83,12 +83,15 @@ def add_to_hosts(path, instance):
         f.write(str(list_string))
 
 
-def get_hosts_list(path):
+def get_hosts_list(path, staging=False):
     """
     Reads the hosts.py file and returns the list.
     """
+    if staging:
+        filepath = path + '/hosts_staging.py'
+    else:
+        filepath = path + '/hosts.py'
 
-    filepath = path + '/hosts.py'
     if os.path.isfile(filepath):
         with open(filepath, 'r') as f:
             list_string = eval(f.readline())

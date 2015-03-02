@@ -48,17 +48,17 @@ Hooks (* run in the functions):
 
 # updates then installs the list of available packages for OS.
 update_os = [
-    {"action": "sudo", "params": "apt-get update", "message": "Updating"},
-    {"action": "sudo", "params": "apt-get upgrade", "message": "Upgrading"},
+    {"action": "sudo", "params": "apt-get --yes update", "message": "Updating"},
+    {"action": "sudo", "params": "apt-get --yes upgrade", "message": "Upgrading"},
 ]
 # main server build, install server packages.
 build_essentials = [
-    {"action": "sudo", "params": "apt-get install python-pip python-dev build-essential",
+    {"action": "sudo", "params": "apt-get --yes install python-pip python-dev build-essential",
      "message": "Installing Python environment"},
-    {"action": "sudo", "params": "apt-get install libmysqlclient-dev"},
+    {"action": "sudo", "params": "apt-get --yes install libmysqlclient-dev"},
     {"action": "sudo", "params": "aptitude install -y libapache2-mod-wsgi"},
-    {"action": "sudo", "params": "apt-get install git-core", "message": "Installing Git"},
-    {"action": "sudo", "params": "apt-get install libmemcached-dev"},
+    {"action": "sudo", "params": "apt-get --yes install git-core", "message": "Installing Git"},
+    {"action": "sudo", "params": "apt-get --yes install libmemcached-dev"},
     {"action": "sudo", "params": "mkdir -p %(server_repo)s"},
     {"action": "sudo", "params": "mkdir %(server_repo)s/releases"},
     {"action": "sudo", "params": "mkdir %(server_repo)s/static"},
@@ -67,12 +67,12 @@ build_essentials = [
 ]
 
 setup_server = [
-
-    {"action": "pip", "params": ["gunicorn"], "message": "Pip installing WSGI HTTP Server Gunicorn"},
+    {"action": "sudo", "params": "pip install git+https://github.com/benoitc/gunicorn.git",
+     "message": "Pip installing WSGI HTTP Server Gunicorn"},
     {"action": "sudo", "params": "cp -fr %(server_repo)s/aws_fabric/environments/%(template)s/wsgi.py %(server_repo)s",
      "message": "Copying WSGI"},
-    {"action": "sudo", "params": "apt-get install supervisor", "message": "Setting up supervisor"},
-    {"action": "sudo", "params": "apt-get install libevent-dev", "message": "Installing workers"},
+    {"action": "sudo", "params": "apt-get --yes install supervisor", "message": "Setting up supervisor"},
+    {"action": "sudo", "params": "apt-get --yes install libevent-dev", "message": "Installing workers"},
     {"action": "sudo", "params": "easy_install greenlet", "message": "Greenlet install"},
     {"action": "sudo", "params": "easy_install gevent", "message": "Gevent install"},
 
@@ -80,21 +80,22 @@ setup_server = [
      "params": "cp -fr %(server_repo)s/aws_fabric/environments/%(template)s/start_gunicorn.conf /etc/supervisor/conf.d/",
      "message": "Creating a start-up process for Gunicorn"},
 
-    {"action": "sudo", "params": "apt-get install nginx", "message": "Installing nginx"},
+    {"action": "sudo", "params": "apt-get --yes install nginx", "message": "Installing nginx"},
 
     {"action": "sudo",
      "params": "cp -fr %(server_repo)s/aws_fabric/environments/%(template)s/default /etc/nginx/sites-available",
      "message": "Copying Nginx config file to location /etc/nginx/sites-available"},
 
-    {"action": "sudo", "params": "apt-get install libjpeg-dev", "message": "Installing libjpeg-dev"},
+    {"action": "sudo", "params": "apt-get --yes install libjpeg-dev", "message": "Installing libjpeg-dev"},
 
 
 ]
 
-# Create an archive from the current Git master branch and upload.
+
+# Create an archive from the current Git release/master branch and upload.
 deploy_release = [
     {"action": "local",
-     "params": "cd %(local_repo)s; git archive --format=tar master | gzip > %(release_stamp)s.tar.gz;",
+     "params": "cd %(local_repo)s; git archive --format=tar %(branch)s | gzip > %(release_stamp)s.tar.gz;",
      "message": "Archiving project for deployment"},
     {"action": "upload_template",
      "params": {"filename": "%(local_repo)s/%(release_stamp)s.tar.gz", "destination": "%(server_repo)s"},
@@ -104,6 +105,10 @@ deploy_release = [
 
 
     {"action": "local", "params": "rm %(local_repo)s/%(release_stamp)s.tar.gz",
+     "message": "Doing some housekeeping"},
+
+
+    {"action": "sudo", "params": "cd %(server_repo)s; rm %(server_repo)s/%(release_stamp)s.tar.gz;",
      "message": "Doing some housekeeping"},
 ]
 
@@ -116,15 +121,7 @@ collect_static = [
 ]
 
 sync_db = [
-    {"action": "sudo", "params": "python %(server_repo)s/manage.py syncdb", "message": "Sync DB"},
-    {"action": "sudo", "params": "python %(server_repo)s/manage.py migrate", "message": "Migrate DB"},
-]
-
-restart_services = [
-    {"action": "sudo", "params": "supervisorctl reread", "message": "Rereading Supervisor"},
-    {"action": "sudo", "params": "supervisorctl update", "message": "Updating Supervisor"},
-    {"action": "sudo", "params": "supervisorctl start gunicorn_process", "message": "Restarting Supervisor process"},
-
+    {"action": "sudo", "params": "python %(server_repo)s/manage.py migrate", "message": "Migrating DB"},
 ]
 
 reboot_instance = [
@@ -135,9 +132,33 @@ create_superuser = [
 
 ]
 
-test = [
-    {"action": "sudo", "params": "mkdir -p %(server_repo)s"},
+
+# Tasks to restart services Supervisor and Celery.
+restart_services = [
+    {"action": "sudo", "params": "supervisorctl reread", "message": "Rereading Supervisor"},
+    {"action": "sudo", "params": "supervisorctl update", "message": "Updating Supervisor"},
+    {"action": "sudo", "params": "supervisorctl restart gunicorn_process",
+     "message": "Restarting Supervisor gunicorn_process process"},
+
 ]
+
+set_update_env_vars = [
+    {"action": "sudo", "params": "cp /srv/%(server_repo)s/aws_fabric/config/vars_%(environment)s.env /srv/%(server_repo)s/.env",
+     "message": "Copying environment variables."},
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
