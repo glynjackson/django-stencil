@@ -47,12 +47,13 @@ from aws_fabric.setup.tasks import _Wizard
 from aws_fabric.utilities import _run_task, add_to_hosts, get_hosts_list, get_settings
 from aws_fabric.ec2.api import _create_instance
 
+local_path = os.path.dirname(os.path.realpath(__file__)) + "/aws_fabric/config"
 
 def base_environment_settings():
     """
     Common environment settings.
     """
-    local_path = os.path.dirname(os.path.realpath(__file__)) + "/aws_fabric/config"
+
     _this_settings = get_settings(local_path)
     env.release_stamp = time.strftime('%Y%m%d%H%M%S')
     env.connection_attempts = 5
@@ -62,7 +63,6 @@ def base_environment_settings():
     env.key_filename = _this_settings['AWS_PRIVATE_FILE']
     env.aws_key = _this_settings['AWS_KEY']
     env.aws_secret_key = _this_settings['AWS_SECRET_KEY']
-    env.hosts = get_hosts_list(local_path, staging=True)
     env.template = _this_settings['TEMPLATE']
     env.tasks = importlib.import_module("aws_fabric.environments.%s.%s" % (env.template, "tasks"))
 
@@ -74,6 +74,7 @@ def staging():
     base_environment_settings()
     env.environment = 'staging'
     env.branch = "master"
+    env.hosts = get_hosts_list(local_path, staging=True)
 
 
 
@@ -81,6 +82,7 @@ def production():
     base_environment_settings()
     env.branch = "release"
     env.environment = 'production'
+    env.hosts = get_hosts_list(local_path)
     env.server_type = {
         'web': {
             'image_id': 'ami-0ea61279',
